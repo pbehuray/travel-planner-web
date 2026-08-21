@@ -12,6 +12,7 @@ import { BudgetBreakdownCard } from '@/components/BudgetBreakdownCard';
 import { HotelList } from '@/components/HotelList';
 import { DayCard } from '@/components/DayCard';
 import { WarningsBanner } from '@/components/WarningsBanner';
+import { HowThisPlanWasBuilt } from '@/components/HowThisPlanWasBuilt';
 
 function TripResultsContent() {
   const params = useParams<{ id: string }>();
@@ -64,6 +65,8 @@ function TripResultsContent() {
       </div>
 
       <WarningsBanner warnings={warnings} />
+
+      <HowThisPlanWasBuilt buildTrace={trip.buildTrace} tripSpec={trip.tripSpec} />
 
       <div className="disclaimer">
         ⚠️ Estimates (costs, timings, and hotel suggestions) are AI-generated and illustrative only.

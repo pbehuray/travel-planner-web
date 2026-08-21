@@ -50,6 +50,31 @@ export interface Review {
   validatedAt?: string;
 }
 
+export type AgentProvider = 'groq' | 'gemini';
+
+export interface PipelineStep {
+  agent: string;
+  section: string;
+  provider: AgentProvider;
+  status: 'ok' | 'fallback';
+}
+
+export interface ValidationCheck {
+  name: string;
+  status: 'pass' | 'fail' | 'warn';
+  message: string;
+}
+
+export interface BuildTrace {
+  runId?: string;
+  pipeline: PipelineStep[];
+  checks: ValidationCheck[];
+  repairCount: number;
+  repairProvider?: AgentProvider;
+  validatorScore?: number;
+  validatorPassed?: boolean;
+}
+
 export interface Trip {
   _id: string;
   userId: string;
@@ -62,6 +87,7 @@ export interface Trip {
   };
   budget: Budget;
   review?: Review;
+  buildTrace?: BuildTrace;
   createdAt: string;
   updatedAt: string;
   warnings?: string[];
