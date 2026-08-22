@@ -38,13 +38,19 @@ export default function Home() {
 
       <div className="home-hero-features">
         <div className="feature-card">
-          <h3>🧠 Multi-Agent AI — specialized agents research, budget, and plan</h3>
+          <div className="feature-icon" aria-hidden="true">🧠</div>
+          <h3>Multi-Agent AI</h3>
+          <p>Specialized agents research, budget, and plan your trip</p>
         </div>
         <div className="feature-card">
-          <h3>✅ Independently Validated — a second AI model checks every plan</h3>
+          <div className="feature-icon" aria-hidden="true">✅</div>
+          <h3>Independently Validated</h3>
+          <p>A second AI model checks every plan</p>
         </div>
         <div className="feature-card">
-          <h3>✏️ Fully Editable — regenerate any day, add/remove activities</h3>
+          <div className="feature-icon" aria-hidden="true">✏️</div>
+          <h3>Fully Editable</h3>
+          <p>Regenerate any day, add or remove activities</p>
         </div>
       </div>
     </div>
