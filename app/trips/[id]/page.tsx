@@ -13,6 +13,7 @@ import { HotelList } from '@/components/HotelList';
 import { DayCard } from '@/components/DayCard';
 import { WarningsBanner } from '@/components/WarningsBanner';
 import { HowThisPlanWasBuilt } from '@/components/HowThisPlanWasBuilt';
+import { TripMap } from '@/components/TripMap';
 
 function TripResultsContent() {
   const params = useParams<{ id: string }>();
@@ -75,8 +76,11 @@ function TripResultsContent() {
         </div>
         <div className="page-header-actions no-print">
           <ValidationBadge score={trip.review?.score} passed={trip.budget?.withinBudget} />
-          <button type="button" className="btn btn-ghost btn-sm" onClick={handleCopyShareLink}>
-            {copied ? '✓ Link copied' : '🔗 Share'}
+          <button type="button" className="btn btn-share" onClick={handleCopyShareLink}>
+            <svg className="btn-pdf-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M8.5 10.5l7-4M8.5 13.5l7 4M9 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM19.5 6a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM19.5 18a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {copied ? 'Link copied' : 'Share'}
           </button>
           <button type="button" className="btn btn-primary btn-pdf" onClick={() => window.print()}>
             <svg className="btn-pdf-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -93,6 +97,7 @@ function TripResultsContent() {
       </p>
 
       <div className="no-print">
+        <TripMap destination={trip.tripSpec?.destination} days={trip.itinerary.days} />
         <WarningsBanner warnings={warnings} />
         <HowThisPlanWasBuilt buildTrace={trip.buildTrace} tripSpec={trip.tripSpec} />
       </div>

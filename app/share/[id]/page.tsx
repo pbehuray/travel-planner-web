@@ -8,6 +8,7 @@ import { ErrorMessage } from '@/components/ErrorMessage';
 import { BudgetBreakdownCard } from '@/components/BudgetBreakdownCard';
 import { HotelList } from '@/components/HotelList';
 import { ReadOnlyDayCard } from '@/components/ReadOnlyDayCard';
+import { TripMap } from '@/components/TripMap';
 
 export default function SharedTripPage() {
   const params = useParams<{ id: string }>();
@@ -67,6 +68,10 @@ export default function SharedTripPage() {
         {trip.tripSpec?.duration ? `${trip.tripSpec.duration}-day trip to ` : 'Trip to '}
         {trip.tripSpec?.destination || ''}
       </p>
+
+      <div className="no-print">
+        <TripMap destination={trip.tripSpec?.destination} days={trip.itinerary.days} />
+      </div>
 
       <div className="disclaimer">
         ⚠️ Estimates (costs, timings, and hotel suggestions) are AI-generated and illustrative only.
