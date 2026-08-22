@@ -96,6 +96,16 @@ export interface Trip {
   logs?: string[];
 }
 
+export interface SharedTrip {
+  tripSpec: TripSpec;
+  itinerary: {
+    days: Day[];
+    hotels: Hotel[];
+    disclaimer?: string;
+  };
+  budget: Budget;
+}
+
 export interface AuthUser {
   _id: string;
   email: string;
@@ -164,6 +174,8 @@ export const api = {
   getTrips: (token: string) => request<Trip[]>('/api/trips', { method: 'GET' }, token),
 
   getTrip: (id: string, token: string) => request<Trip>(`/api/trips/${id}`, { method: 'GET' }, token),
+
+  getSharedTrip: (id: string) => request<SharedTrip>(`/api/share/${id}`, { method: 'GET' }),
 
   createPlan: (requestText: string, token: string) =>
     request<Trip>('/api/plan', { method: 'POST', body: JSON.stringify({ request: requestText }) }, token),

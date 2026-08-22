@@ -2,44 +2,26 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { useAuth } from '@/lib/auth-context';
-import { api, ApiError, type Trip } from '@/lib/api';
+import { api, ApiError, type SharedTrip } from '@/lib/api';
 import { LoadingState } from '@/components/LoadingState';
 import { ErrorMessage } from '@/components/ErrorMessage';
-import { ValidationBadge } from '@/components/ValidationBadge';
 import { BudgetBreakdownCard } from '@/components/BudgetBreakdownCard';
 import { HotelList } from '@/components/HotelList';
-import { DayCard } from '@/components/DayCard';
-import { WarningsBanner } from '@/components/WarningsBanner';
-import { HowThisPlanWasBuilt } from '@/components/HowThisPlanWasBuilt';
+import { ReadOnlyDayCard } from '@/components/ReadOnlyDayCard';
 
-function TripResultsContent() {
+export default function SharedTripPage() {
   const params = useParams<{ id: string }>();
   const tripId = params.id;
-  const { token } = useAuth();
-  const [trip, setTrip] = useState<Trip | null>(null);
+  const [trip, setTrip] = useState<SharedTrip | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyShareLink = async () => {
-    const url = `${window.location.origin}/share/${tripId}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      window.prompt('Copy this link:', url);
-    }
-  };
 
   const loadTrip = useCallback(() => {
-    if (!token || !tripId) return;
+    if (!tripId) return;
     api
-      .getTrip(tripId, token)
+      .getSharedTrip(tripId)
       .then(setTrip)
       .catch((err) => setError(err instanceof ApiError ? err.message : 'Failed to load trip'));
-  }, [token, tripId]);
+  }, [tripId]);
 
   useEffect(() => {
     loadTrip();
@@ -56,28 +38,22 @@ function TripResultsContent() {
   if (!trip) {
     return (
       <div className="page">
-        <LoadingState label="Loading trip…" />
+        <LoadingState label="Loading shared trip…" />
       </div>
     );
   }
-
-  const feedbackLines = trip.review?.feedback?.split('\n').filter(Boolean) || [];
-  const warnings = feedbackLines
-    .filter((line) => line.startsWith('warning:'))
-    .map((line) => line.replace(/^warning:\s*/, ''));
 
   return (
     <div className="page">
       <div className="page-header">
         <div>
-          <h1>{trip.tripSpec?.destination || 'Your trip'}</h1>
-          <p className="trip-request">&ldquo;{trip.request}&rdquo;</p>
+          <h1>{trip.tripSpec?.destination || 'Shared trip'}</h1>
+          <p className="trip-request">
+            {trip.tripSpec?.duration ? `${trip.tripSpec.duration}-day trip` : 'Trip itinerary'}
+          </p>
         </div>
         <div className="page-header-actions no-print">
-          <ValidationBadge score={trip.review?.score} passed={trip.budget?.withinBudget} />
-          <button type="button" className="btn btn-ghost btn-sm" onClick={handleCopyShareLink}>
-            {copied ? '✓ Link copied' : '🔗 Share'}
-          </button>
+          <span className="badge badge-shared">🔒 Read-only shared view</span>
           <button type="button" className="btn btn-primary btn-pdf" onClick={() => window.print()}>
             <svg className="btn-pdf-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v2a2 2 0 002 2h10a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -89,13 +65,8 @@ function TripResultsContent() {
 
       <p className="print-title">
         {trip.tripSpec?.duration ? `${trip.tripSpec.duration}-day trip to ` : 'Trip to '}
-        {trip.tripSpec?.destination || ''} &mdash; &ldquo;{trip.request}&rdquo;
+        {trip.tripSpec?.destination || ''}
       </p>
-
-      <div className="no-print">
-        <WarningsBanner warnings={warnings} />
-        <HowThisPlanWasBuilt buildTrace={trip.buildTrace} tripSpec={trip.tripSpec} />
-      </div>
 
       <div className="disclaimer">
         ⚠️ Estimates (costs, timings, and hotel suggestions) are AI-generated and illustrative only.
@@ -105,7 +76,7 @@ function TripResultsContent() {
       <div className="trip-layout">
         <div className="trip-days">
           {trip.itinerary.days.map((day) => (
-            <DayCard key={day.day} tripId={trip._id} day={day} token={token!} onUpdate={setTrip} />
+            <ReadOnlyDayCard key={day.day} day={day} />
           ))}
         </div>
         <div className="trip-sidebar">
@@ -118,13 +89,5 @@ function TripResultsContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function TripPage() {
-  return (
-    <ProtectedRoute>
-      <TripResultsContent />
-    </ProtectedRoute>
   );
 }
