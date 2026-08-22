@@ -14,7 +14,7 @@ interface Pin {
   approx?: boolean;
 }
 
-const DAY_COLORS = ['#4f46e5', '#0d9488', '#d97706', '#dc2626', '#7c3aed', '#059669', '#db2777', '#0891b2'];
+const DAY_COLORS = ['var(--color-primary)', '#0d9488', '#d97706', '#dc2626', '#0ea5e9', '#059669', '#db2777', '#0891b2'];
 const INDIA_FALLBACK: [number, number] = [20.5937, 78.9629];
 
 function colorForDay(day: number) {
